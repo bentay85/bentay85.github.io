@@ -3,9 +3,9 @@ layout: default
 title: "Home"
 ---
 
-Welcome to my site. Below you will find my latest notes and articles.
+Welcome to Ben's Tech Notebook—a central repository dedicated to tracking technical projects from initial concept to functional execution. This site serves as an open-source archive of deployment runbooks, architectural breakdowns, and hands-on solutions to complex engineering challenges. By documenting the exact steps, edge cases, and configurations discovered along the way, this notebook ensures every build is reproducible, modular, and optimized for future reference.
 
-## Blog Posts
+### The Register  
 
 <ul>
   {% for post in site.posts %}
