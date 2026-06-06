@@ -22,7 +22,7 @@ To bridge the gap between Windows and the IR blaster, I used:
 
 Setup the Clock and Smart IR device normally using the Android app. You should be able to control the TV from your smartphone. However, what we want to do is to automatically power on and shut down the TV with the PC.
  
-## The Tuya IoT Platform Setup
+### The Tuya IoT Platform Setup
 
 You must first link your devices to a Tuya Developer account. This only needs to be done once to retrieve the device local keys.
 
