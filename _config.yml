@@ -1,3 +1,10 @@
 theme: jekyll-theme-midnight
 title: "Ben's website"
 description: "A place for me to explore tech"
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
