@@ -1,6 +1,7 @@
 theme: jekyll-theme-midnight
 title: "Benjamin's Technology Notebook"
 description: "The project logs, technical runbooks, and problem-solving notes behind Ben’s engineering builds."
+url: "https://bentay85.github.io"
 
 defaults:
   - scope:
