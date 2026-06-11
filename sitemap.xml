@@ -3,13 +3,12 @@ layout: none
 ---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{% for page in site.pages %}{% if page.sitemap != false and page.url != "/sitemap.xml" %}
+{% for page in site.pages %}{% if page.sitemap != false and page.url != "/sitemap.xml" %}{% unless page.url contains '.css' or page.url contains '.js' or page.url contains '.txt' or page.url contains '.xml' or page.url contains '.json' %}
   <url>
     <loc>{{ site.url }}{{ page.url | remove: "index.html" }}</loc>
     {% if page.last_modified_at %}<lastmod>{{ page.last_modified_at | date: "%Y-%m-%d" }}</lastmod>{% endif %}
   </url>
-{% endif %}{% endfor %}
-{% for post in site.posts %}
+{% endunless %}{% endif %}{% endfor %}{% for post in site.posts %}
   <url>
     <loc>{{ site.url }}{{ post.url }}</loc>
     <lastmod>{{ post.date | date: "%Y-%m-%d" }}</lastmod>
