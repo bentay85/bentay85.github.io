@@ -5,7 +5,7 @@ title: "Turning On The Lights And Fan From My Phone's Homescreen"
 
 In a previous post I used a smart clock with a built-in Smart IR device, the **tinytuya** library and some Windows automation to switch my TV on and off with the PC: [link](https://bentay85.github.io/2026-04-15/smart-clock.html)
 
-That setup works, but it runs from the PC, and the PC only handles what it was scripted to do. The next step was to control the my lights (through the IR blaster) plus my Xiaomi smart fan directly from an icon on my phone's homescreen - no PC involved. Since both devices are on the LAN, the phone can talk to them just as well as the desktop does.
+That setup works, but it runs from the PC, and the PC only handles what it was scripted to do. The next step was to control my lights (through the IR blaster) plus my Xiaomi smart fan directly from an icon on my phone's homescreen - no PC involved. Since both devices are on the LAN, the phone can talk to them just as well as the desktop does.
 
 ### The Tech Stack
 
