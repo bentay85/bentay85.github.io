@@ -84,11 +84,25 @@ The two devices behave differently, so the script handles them differently:
 *   **The fan** takes explicit on/off commands over MiOT via python-miio. The script *reads* the fan's reported power first, only writes when it differs from what was asked, then re-reads to confirm. A repeated press is therefore harmless.
 *   **The lamp** is driven by the IR blaster playing back the learned code from the lamp remote's single power button. Infrared is a blind toggle - nothing is acknowledged and nothing is remembered between presses, so each press sends the code exactly once. If the lamp ends up in the wrong state (it was already on when you pressed *On*), just press the same button again and it re-toggles, while the fan write is skipped because it already reports the state you asked for.
 
+The code below is an abridged version of what the *On* button runs - runnable, but stripped of the error handling that the real script has. It toggles the lamp and turns the fan on:
+
 ```python
+import json
+import time
+import tomllib
+from pathlib import Path
+
 import tinytuya
 from miio import Fan1C
 
-fan = Fan1C(fan_cfg["ip"], fan_cfg["token"], model="dmaker.fan.1c")
+config_file = Path(__file__).resolve().parent / "config.toml"
+config = tomllib.loads(config_file.read_text(encoding="utf-8-sig"))
+fan_cfg, ir_cfg = config["fan"], config["ir"]
+
+# the [[ir.commands]] entry holding the lamp's single power code
+code = next(c["code"] for c in ir_cfg["commands"] if c["name"] == "light power on/off")
+
+fan = Fan1C(fan_cfg["ip"], fan_cfg["token"], model=fan_cfg.get("model", "dmaker.fan.1c"))
 fan.on()  # or fan.off()
 
 payload = json.dumps(
@@ -96,8 +110,9 @@ payload = json.dumps(
     sort_keys=True,
 )
 device = tinytuya.OutletDevice(ir_cfg["device_id"], ir_cfg["ip"], ir_cfg["local_key"])
-device.set_version("3.5")
+device.set_version(ir_cfg.get("protocol_version", "3.5"))
 device.set_value("201", payload, nowait=True)
+time.sleep(0.6)  # let the box finish emitting before the socket closes
 ```
 
 The write to the IR box uses `nowait=True` because this box never answers a write, with a short sleep afterwards so it finishes emitting the signal before the socket closes.
