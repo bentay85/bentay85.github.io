@@ -149,4 +149,4 @@ To get the buttons onto the homescreen:
 
 ### The Result
 
-One press on the homescreen and the fan spins up while the IR blaster toggles the lamp - without the PC being on. Two small annoyances worth remembering: if the fan is ever re-paired its token rotates, and if the IR box is removed and re-added in the Tuya app its local key rotates, so both need re-copying into `config.toml`. And Android likes to kill background jobs, so exclude Termux from battery optimisation if presses fail with the screen off.
+One press on the homescreen and the fan spins up while the IR blaster toggles the lamp - without the PC being on. Two small annoyances worth remembering: if the fan is ever re-paired its token rotates, and if the IR box is removed and re-added in the Tuya app its local key rotates, so both need re-copying into `config.toml`.
