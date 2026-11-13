@@ -123,8 +123,10 @@
     min-height: 0;
   }
   .wrapper section {
-    /* take all the width left next to the 240px panel */
+    /* take all the width left next to the 240px panel; max-width:none
+       releases the theme's own `section { max-width: 650px }` cap */
     flex: 1 1 640px;
+    max-width: none;
     order: 2;
     min-width: 0;
     overflow-y: auto;
@@ -157,7 +159,7 @@
   /* Exact hanging indent: the date and title are two flex items, so
      every wrapped title line aligns precisely with the first.
      Titles left-align (the column is too narrow to justify without
-     large word gaps); dates center inside their fixed column. */
+     large word gaps); dates right-align inside their fixed column. */
   #site-nav li a {
     display: flex;
     align-items: baseline;
@@ -168,12 +170,13 @@
   #site-nav a.current { color: #ffcc00; }
   #site-nav .nav-date { color: #696969; }
   /* Date column: fixed width, never wraps, two stacked lines
-     (year, then day+month) so every title starts at the same x. */
+     (year, then day+month) right-aligned toward the titles, so
+     every title starts at the same x. */
   #site-nav .nav-date {
     flex: 0 0 auto;
     width: 3.4em;
     white-space: nowrap;
-    text-align: center;
+    text-align: right;
   }
   #site-nav .nav-date > span { display: block; }
 
@@ -193,13 +196,15 @@
       gap: 0;
       padding: 12px 20px 0;
     }
-    .wrapper section { flex: none; overflow: visible; }
+    .wrapper section { flex: none; overflow: visible; padding-bottom: 0; }
+    /* no dead space between the end of the post and the list */
+    .wrapper section > :last-child { margin-bottom: 0; }
     /* Post list moves to the bottom of the page, below the content. */
     #site-nav {
       flex: none;
       order: 2;
       max-height: none;
-      margin: 30px auto 20px;
+      margin: 24px auto 30px;
       border-top: 3px solid #434343;
       padding: 16px 20px 20px;
     }

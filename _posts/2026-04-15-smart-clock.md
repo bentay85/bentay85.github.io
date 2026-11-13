@@ -72,7 +72,7 @@ Running the script using `python main.py` should turn off the TV. With your scre
 
 ### Creating the Automation Scripts  
 
-To make this hands-off, I created two batch files to handle the startup and shutdown triggers. These scripts use the uv Python package manager to execute the code.  
+To make this hands-off, I created two batch files to handle the startup and shutdown triggers. They simply call the `python` command from the Windows installation made earlier.  
 
 This script runs when the computer starts up to ensure the TV turns on.  
 ```bat
