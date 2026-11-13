@@ -59,8 +59,11 @@
      the top, so it stays visible while the page scrolls, and it is
      shown only at narrow widths (hidden from 1031px up, see the wide
      media query further down, where .nav-brand takes its place in
-     the sidebar). Banner height: 7px top padding + 80px text block
-     (two 40px lines) + 8px bottom padding + 4px border. */
+     the sidebar). The banner and the sidebar brand use the same
+     typography (28px / 36px line-height) and icon height (72px), so
+     they read identically at every width. Banner height: 7px top
+     padding + 72px text block (two 36px lines) + 8px bottom
+     padding + 4px border. */
   .site-banner {
     position: sticky;
     top: 0;
@@ -72,25 +75,25 @@
   .banner-title {
     font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: normal;
-    font-size: 32px;
-    line-height: 40px;
+    font-size: 28px;
+    line-height: 36px;
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 20px;
     text-align: left;
   }
-  .banner-title a { color: #e8e8e8; text-decoration: none; }
+  .banner-title a { color: #d7cfbe; text-decoration: none; }
   .banner-title a:hover { color: #ffeb9b; }
   /* Icon and the two-line name side by side. The icon is as tall as
-     the two text lines (2 x 40px line-height), so the banner is
+     the two text lines (2 x 36px line-height), so the banner is
      exactly as tall as its padding + text block. */
   .banner-link {
     display: flex;
     align-items: center;
     column-gap: 16px;
   }
-  .banner-logo { height: 80px; width: auto; }
-  .banner-name { line-height: 40px; }
+  .banner-logo { height: 72px; width: auto; }
+  .banner-name { line-height: 36px; }
   /* On the home and About pages the banner title is the page's only
      h1 (post pages take their h1 from the post heading, so there the
      banner is just styled text). Kill the theme's big h1 styles
@@ -98,8 +101,8 @@
   .banner-title h1 {
     font-family: inherit;
     font-weight: normal;
-    font-size: 32px;
-    line-height: 40px;
+    font-size: 28px;
+    line-height: 36px;
     margin: 0;
   }
 
@@ -123,7 +126,9 @@
     padding-bottom: 8px;
     margin-bottom: 12px;
   }
-  .nav-brand a { color: #e8e8e8; text-decoration: none; }
+  /* Same tan as the sidebar links (#site-nav a), which is what
+     actually colors this link at wide widths. */
+  .nav-brand a { color: #d7cfbe; text-decoration: none; }
   .nav-brand a:hover { color: #ffeb9b; }
   /* The post-list rule `#site-nav a { display: block }` outranks the
      class-based .banner-link { display: flex }, which would leave the
@@ -199,7 +204,7 @@
   #site-nav .nav-pages { margin: 0 0 12px; }
   #site-nav .nav-pages a { font-size: 14px; }
   #site-nav ul + ul {
-    border-top: 3px solid #434343;
+    border-top: 4px solid #434343;
     padding-top: 12px;
   }
   #site-nav ul { list-style: none; margin: 0; padding: 0; }
@@ -318,7 +323,7 @@
       max-height: none;
       overflow: visible;
       margin: 24px 0 10px;
-      border-top: 3px solid #434343;
+      border-top: 4px solid #434343;
       padding: 16px 0 0;
     }
     #site-nav ul { margin: 10px 0 0; }
@@ -328,7 +333,7 @@
      shrunk here: the theme renders it inside an h1 on the home page,
      and .banner-title h1 outranks a .banner-title override, so the
      only way to keep the size consistent between the home page and
-     the posts is to keep 32px at every width. */
+     the posts is to keep 28px at every width. */
   @media (max-width: 720px) {
     #site-nav { font-size: 13px; }
     #site-nav li { margin: 0 0 10px; }
