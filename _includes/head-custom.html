@@ -1,19 +1,32 @@
 <!-- Site-wide customizations for jekyll-theme-midnight.
      This file overrides the theme's own _includes/head-custom.html
      (documented override for gem-based themes) and is injected into
-     the <head> of every page. -->
-<style>
-  /* Remove the fixed top bar ("View On GitHub" button) on every page,
-     and let the banner sit flush with the top of the screen. */
-  #header { display: none; }
-  section { margin-top: 0; }
+     the <head> of every page.
 
-  /* Stop the ~8px layout shift between pages that have a scrollbar
-     (long posts) and pages that don't (home): always reserve the
-     scrollbar gutter so the centered column never moves. */
-  html { scrollbar-gutter: stable; }
+     Layout model (the script at the bottom rearranges the DOM to match):
+       body (grid, viewport height, no page scroll on wide screens)
+       ├── #title   banner, full width, flush top, stays fixed while reading
+       └── .wrapper flex row, centered: #site-nav (post list) | section
+            Only the section scrolls; the banner and post list stay put.
+       Narrow screens (<1031px) fall back to normal page scrolling with
+       the post list at the bottom of the page. -->
+<style>
+  /* Remove the fixed top bar ("View On GitHub" button) on every page. */
+  #header { display: none; }
+
+  /* App shell on wide screens: the page itself never scrolls, the
+     content column does. Reserve a stable scrollbar lane so the
+     centered layout never shifts; paint it dark with the theme. */
+  html { height: 100%; scrollbar-gutter: stable; }
   @supports not (scrollbar-gutter: stable) {
     html { overflow-y: scroll; }
+  }
+  body {
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   /* The reserved gutter is painted as a light Windows scrollbar
@@ -27,7 +40,7 @@
   ::-webkit-scrollbar-thumb { background: #434343; border-radius: 7px; }
   ::-webkit-scrollbar-thumb:hover { background: #555555; }
 
-  /* Justified prose within the theme's 650px column, on every page.
+  /* Justified prose within the content column, on every page.
      Hyphenation keeps the edges clean at this width. Code blocks are
      excluded (justified code looks broken). */
   section p, section li {
@@ -37,33 +50,54 @@
   }
   section pre { text-align: left; }
 
-  /* Site banner: turn the theme's title block (site title,
-     description, credits) into a banner that spans the full viewport
-     width and sits flush at the top, above the content and the side
-     panel. Exact width/left offset are set by the script below (the
-     CSS values are only the pre-JS approximation). */
-  section #title {
-    width: 100vw;
-    margin: 0 0 30px calc(50% - 50vw);
-    padding: 8px 40px 14px;
-    box-sizing: border-box;
+  /* Banner: the theme's title block, moved to the top of the body by
+     the script, so it is naturally full width with no margin hacks.
+     Style values mirror the theme's own (which stop matching once the
+     block leaves the section, hence the re-declaration). */
+  #title {
     background: #2c2c2b;
     border-bottom: 4px solid #434343;
+    padding: 10px 40px 14px;
+    margin: 0;
   }
-  section #title h1 { margin-top: 6px; margin-bottom: 6px; }
-  section #title .credits { margin-top: 4px; }
+  #title::after { content: ""; display: table; clear: both; } /* contain the floated credits */
+  #title hr { display: none; }                                /* the ====== separator */
+  #title h1 {
+    font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal; font-size: 40px; line-height: 44px;
+    color: #e8e8e8; text-align: center; margin: 4px 0 6px;
+  }
+  #title p {
+    font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal; font-size: 18px; color: #d7cfbe;
+    text-align: center; margin: 0;
+  }
+  #title .credits { font-size: 11px; color: #696969; margin-top: 12px; }
+  #title .credits.left { float: left; }
+  #title .credits.right { float: right; }
 
-  /* Post navigation panel: fixed side panel below the banner, in the
-     empty space left of the centered 650px column. --banner-h is set
-     by the script below to the banner's real height. Below 1220px a
-     side panel would collide with the column, so it becomes a normal
-     block at the bottom of every page instead. */
+  /* Row layout: post list beside the content, the pair centered
+     below the banner. The wrapper fills the space under the banner;
+     only the section scrolls. */
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 36px;
+    max-width: 1000px;
+    padding: 30px 20px 20px;
+    min-height: 0;
+  }
+  .wrapper section {
+    flex: 0 1 650px;
+    order: 2;
+    min-width: 0;
+    overflow-y: auto;
+  }
   #site-nav {
-    position: fixed;
-    top: calc(var(--banner-h, 190px) + 16px);
-    left: 24px;
-    width: 230px;
-    max-height: calc(100vh - var(--banner-h, 190px) - 32px);
+    flex: 0 0 240px;
+    order: 1;
+    max-height: 100%;
     overflow-y: auto;
     border-left: 3px solid #434343;
     padding-left: 12px;
@@ -82,31 +116,39 @@
   #site-nav a:hover { color: #ffeb9b; }
   #site-nav a.current { color: #ffcc00; }
   #site-nav .nav-date { color: #696969; }
-  @media (max-width: 1220px) {
+
+  /* Too narrow for the beside layout: back to normal page scrolling,
+     content first, post list at the bottom of the page. */
+  @media (max-width: 1030px) {
+    body { display: block; overflow: auto; height: auto; }
+    .wrapper {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 20px 20px 0;
+    }
+    .wrapper section { flex: none; overflow: visible; }
     #site-nav {
-      position: static;
-      width: auto;
-      max-width: 650px;
+      flex: none;
+      order: 2;
       max-height: none;
-      margin: 30px auto 0;
+      margin: 30px auto 20px;
+      max-width: 650px;
       border-left: none;
       border-top: 3px solid #434343;
-      padding: 16px 20px 0;
+      padding: 16px 20px 20px;
     }
   }
 
-  /* Phone portrait: tighten the banner, make the bottom post list
-     comfortable to tap, and keep wide elements from forcing
-     horizontal scroll. */
+  /* Phone portrait: tighter banner, comfortable tap spacing, and no
+     sideways page scroll from wide tables or code. */
   @media (max-width: 720px) {
-    section #title { padding: 10px 16px 12px; }
-    section #title h1 { font-size: 30px; line-height: 1.15; }
-    section #title p { font-size: 15px; }
-    section #title .credits { font-size: 12px; }
-    #site-nav { font-size: 13px; padding: 16px 16px 0; }
+    #title { padding: 8px 16px 12px; }
+    #title h1 { font-size: 28px; line-height: 34px; }
+    #title p { font-size: 15px; }
+    #title .credits { font-size: 11px; }
+    #site-nav { font-size: 13px; padding: 16px 16px 20px; }
     #site-nav li { margin: 0 0 10px; }
-    /* Tables and code blocks scroll inside their own box instead of
-       stretching the page sideways. */
     section table, section pre { max-width: 100%; overflow-x: auto; }
     /* Very narrow columns left-align: justification needs room. */
     section p, section li {
@@ -118,10 +160,10 @@
 </style>
 
 <!-- Post list rendered by Jekyll at build time (oldest first), hidden
-     in a template and moved into the page body by the script below. -->
+     in a template and moved into the page by the script below. -->
 <template id="site-nav-template">
   <nav id="site-nav" aria-label="Site posts">
-    <a class="nav-home" href="{{ '/' | relative_url }}">Home - all posts</a>
+    <a class="nav-home" href="{{ '/' | relative_url }}">Home</a>
     <ul>
       {% for post in site.posts reversed %}
       <li>
@@ -136,10 +178,20 @@
 </template>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var t = document.getElementById('site-nav-template');
-    if (t) {
-      document.body.appendChild(t.content.cloneNode(true));
+    var wrapper = document.querySelector('.wrapper');
+
+    // Move the banner out of the column to the top of the page.
+    var banner = document.querySelector('section #title');
+    if (banner && wrapper) {
+      document.body.insertBefore(banner, wrapper);
     }
+
+    // Put the post list inside the flex wrapper, beside the content.
+    var t = document.getElementById('site-nav-template');
+    if (t && wrapper) {
+      wrapper.insertBefore(t.content.cloneNode(true), wrapper.firstChild);
+    }
+
     // Highlight the link for the page being viewed.
     var here = location.pathname.replace(/\/+$/, '');
     document.querySelectorAll('#site-nav a').forEach(function (a) {
@@ -148,20 +200,5 @@
         a.classList.add('current');
       }
     });
-    // Make the banner exactly flush: full layout width, pinned to the
-    // left edge, regardless of how the theme nests its containers.
-    // Also publish its real height so the side panel starts below it.
-    var banner = document.querySelector('section #title');
-    function sizeBanner() {
-      if (!banner) return;
-      banner.style.marginLeft = '0';               // undo previous sizing first,
-      var left = banner.getBoundingClientRect().left; // then measure the true column edge
-      var w = document.documentElement.clientWidth; // viewport minus scrollbar gutter
-      banner.style.width = (w + 24) + 'px';
-      banner.style.marginLeft = (-left + 12) + 'px';
-      document.documentElement.style.setProperty('--banner-h', banner.offsetHeight + 'px');
-    }
-    sizeBanner();
-    window.addEventListener('resize', sizeBanner);
   });
 </script>
