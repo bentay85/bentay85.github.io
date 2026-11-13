@@ -106,6 +106,10 @@
     padding: 0 14px 50px 0;
   }
   #site-nav {
+    /* The theme hides all bare `nav` elements at <=480px (intended
+       for its header bar). display:block here outranks that type
+       selector at every width, so the post list is never hidden. */
+    display: block;
     flex: 0 0 240px;
     order: 1;
     max-height: 100%;
@@ -124,11 +128,14 @@
   #site-nav li { margin: 0 0 7px; }
   #site-nav a { color: #d7cfbe; text-decoration: none; display: block; }
   /* Exact hanging indent: the date and title are two flex items, so
-     every wrapped title line aligns precisely with the first. */
+     every wrapped title line aligns precisely with the first.
+     Titles are justified within their column; dates center inside
+     their fixed column. */
   #site-nav li a {
     display: flex;
     align-items: baseline;
     column-gap: 0.5em;
+    text-align: justify;
   }
   #site-nav a:hover { color: #ffeb9b; }
   #site-nav a.current { color: #ffcc00; }
@@ -139,6 +146,7 @@
     flex: 0 0 auto;
     width: 3.4em;
     white-space: nowrap;
+    text-align: center;
   }
   #site-nav .nav-date > span { display: block; }
 
