@@ -8,8 +8,8 @@
        ├── #title   banner, full width, flush top, stays fixed while reading
        └── .wrapper flex row, centered: #site-nav (post list) | section
             Only the section scrolls; the banner and post list stay put.
-       Narrow screens (<1031px) fall back to normal page scrolling with
-       a collapsed "All posts" toggle below the banner. -->
+       Narrow screens (<1031px) fall back to normal page scrolling
+       with the full post list below the banner. -->
 <style>
   /* Remove the fixed top bar ("View On GitHub" button) on every page. */
   #header { display: none; }
@@ -115,21 +115,16 @@
     color: #ffcc00;
     margin: 12px 0 0;
   }
-  /* Desktop: the expand/collapse control is not needed, the list is
-     always visible. (The details element starts open; the script
-     closes it only on narrow screens.) */
-  #site-nav summary { display: none; }
   #site-nav ul { list-style: none; margin: 0; padding: 0; }
   #site-nav li { margin: 0 0 7px; }
   #site-nav a { color: #d7cfbe; text-decoration: none; display: block; }
-  /* Title wraps in a column beside the date: the date sits in a fixed
-     first-line slot, and every wrapped line starts after that slot,
-     so the space under the date stays blank. */
+  /* Exact hanging indent: the date and title are two flex items, so
+     every wrapped title line aligns precisely with the first. */
   #site-nav li a {
-    padding-left: 6.3em;
-    text-indent: -6.3em;
+    display: flex;
+    align-items: baseline;
+    column-gap: 0.5em;
   }
-  #site-nav li a .nav-date { text-indent: 0; }
   #site-nav a:hover { color: #ffeb9b; }
   #site-nav a.current { color: #ffcc00; }
   #site-nav .nav-date { color: #696969; }
@@ -151,8 +146,8 @@
       padding: 12px 20px 0;
     }
     .wrapper section { flex: none; overflow: visible; }
-    /* Post list becomes a compact "All posts" toggle directly under
-       the banner, above the content - visible without scrolling. */
+    /* Post list renders in full directly under the banner, above the
+       content - same list as the desktop side panel, just stacked. */
     #site-nav {
       flex: none;
       order: 0;
@@ -161,12 +156,6 @@
       max-width: 650px;
       border-bottom: 3px solid #434343;
       padding: 8px 20px;
-    }
-    #site-nav summary {
-      display: block;
-      font-size: 14px;
-      color: #ffcc00;
-      cursor: pointer;
     }
     #site-nav ul { margin: 10px 0 0; }
     .wrapper section { order: 2; }
@@ -182,12 +171,6 @@
     #site-nav { font-size: 13px; padding: 8px 16px; }
     #site-nav li { margin: 0 0 10px; }
     section table, section pre { max-width: 100%; overflow-x: auto; }
-    /* Very narrow columns left-align: justification needs room. */
-    section p, section li {
-      text-align: left;
-      hyphens: none;
-      -webkit-hyphens: none;
-    }
   }
 </style>
 
@@ -195,20 +178,17 @@
      in a template and moved into the page by the script below. -->
 <template id="site-nav-template">
   <nav id="site-nav" aria-label="Site posts">
-    <details id="site-nav-details" open>
-      <summary>All posts</summary>
-      <ul>
-        {% for post in site.posts reversed %}
-        <li>
-          <a href="{{ post.url | relative_url }}">
-            <span class="nav-date">{{ post.date | date: "%Y-%m-%d" }}</span>
-            {{ post.title }}
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-      <a class="nav-home" href="{{ '/' | relative_url }}">Back to Home</a>
-    </details>
+    <ul>
+      {% for post in site.posts reversed %}
+      <li>
+        <a href="{{ post.url | relative_url }}">
+          <span class="nav-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+          {{ post.title }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    <a class="nav-home" href="{{ '/' | relative_url }}">Back to Home</a>
   </nav>
 </template>
 <script>
@@ -235,18 +215,5 @@
         a.classList.add('current');
       }
     });
-
-    // Narrow screens: the list starts collapsed as a one-line
-    // "All posts" toggle; wide screens always show it fully.
-    var mq = window.matchMedia('(max-width: 1030px)');
-    var syncNav = function () {
-      var d = document.getElementById('site-nav-details');
-      if (!d) return;
-      if (mq.matches) { d.removeAttribute('open'); }
-      else { d.setAttribute('open', ''); }
-    };
-    syncNav();
-    if (mq.addEventListener) { mq.addEventListener('change', syncNav); }
-    else if (mq.addListener) { mq.addListener(syncNav); }
   });
 </script>
