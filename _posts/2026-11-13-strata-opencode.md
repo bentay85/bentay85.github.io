@@ -1,6 +1,16 @@
 ---
 title: "Strata + OpenCode: A Local Coding Agent On A 4060 Ti"
 ---
+<style>
+  /* Justified prose with hyphenation so the edges stay clean.
+     Headings, code, tables and images keep their normal alignment. */
+  section p, section li {
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+</style>
+
 # Strata + OpenCode: A Local Coding Agent On A 4060 Ti
 
 I replaced the cloud LLM behind my coding agent with a model running entirely on my own machine. [Strata](https://github.com/Niko1221/Strata) serves a quantized Qwen model locally through an OpenAI-compatible API, and [OpenCode](https://opencode.ai/) - an open-source coding agent, for me in its desktop app - talks to it as if it were any other provider. Nothing leaves my PC except git pushes.
@@ -113,6 +123,12 @@ My config ended up looking like this (Strata's template plus my own edits - the 
 Here is the honest part of the writeup. When the model is loaded, **Strata consumes nearly all of the system RAM and almost all of the VRAM**. In a typical working session, Task Manager reads **59.5 GB of the 64 GB RAM** and **15.0 GB of the 16 GB VRAM** in use. That leaves very little headroom for anything else - and this includes the agent's own shell commands.
 
 The consequence: **testing has to be done with the LLM unloaded.** I cannot have the agent run the test suite, load a second model, or start a heavy service while it is itself being served by a model that owns all the memory. Anything heavier than a linter or a syntax check risks an out-of-memory crash - which, mid-session, often means losing the agent *and* the test run at once.
+
+### Quitting Strata: Free The RAM And VRAM
+
+So how do I get the memory back when it is time to test? In the `strata launch` terminal, press **`q`** to quit - Strata then asks what to do with the loaded model, and I select **"Stop serving and free memory"**. That shuts down the engine and the image encoder and gives back **both the 15 GB of VRAM and the 59 GB of pinned RAM** at once, instead of lingering as a background server. With the memory genuinely free, I can run the test suite, load a second model in ComfyUI, or do whatever else was impossible while the LLM was up - then bring the agent back in seconds with the same `strata launch --preset "IQ3_S 256K"` command (the model files stay in the OS file cache, so reloading is fast).
+
+The habit matters more than the flag: press `q`, pick "Stop serving and free memory", *then* start the heavy task. Killing the terminal window or leaving Strata serving "just in case" keeps nearly the whole 64 GB pinned.
 
 ### Does The 256K Context Fit? The Memory Math
 
