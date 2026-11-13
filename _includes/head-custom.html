@@ -4,9 +4,9 @@
      the <head> of every page. -->
 <style>
   /* Remove the fixed top bar ("View On GitHub" button) on every page,
-     and pull the page content up into the freed space. */
+     and let the banner sit flush with the top of the screen. */
   #header { display: none; }
-  section { margin-top: 30px; }
+  section { margin-top: 0; }
 
   /* Stop the ~8px layout shift between pages that have a scrollbar
      (long posts) and pages that don't (home): always reserve the
@@ -39,17 +39,18 @@
 
   /* Site banner: turn the theme's title block (site title,
      description, credits) into a banner that spans the full viewport
-     width and sits above the content and the side panel. The wide
-     negative margin stretches it out of the 650px column. */
+     width and sits flush at the top, above the content and the side
+     panel. Exact width/left offset are set by the script below (the
+     CSS values are only the pre-JS approximation). */
   section #title {
-    width: calc(100vw + 24px);
-    margin: 0 0 30px calc(50% - 50vw - 12px);
-    padding: 24px 40px 14px;
+    width: 100vw;
+    margin: 0 0 30px calc(50% - 50vw);
+    padding: 8px 40px 14px;
     box-sizing: border-box;
     background: #2c2c2b;
     border-bottom: 4px solid #434343;
   }
-  section #title h1 { margin-bottom: 6px; }
+  section #title h1 { margin-top: 6px; margin-bottom: 6px; }
   section #title .credits { margin-top: 4px; }
 
   /* Post navigation panel: fixed side panel below the banner, in the
@@ -93,6 +94,27 @@
       padding: 16px 20px 0;
     }
   }
+
+  /* Phone portrait: tighten the banner, make the bottom post list
+     comfortable to tap, and keep wide elements from forcing
+     horizontal scroll. */
+  @media (max-width: 720px) {
+    section #title { padding: 10px 16px 12px; }
+    section #title h1 { font-size: 30px; line-height: 1.15; }
+    section #title p { font-size: 15px; }
+    section #title .credits { font-size: 12px; }
+    #site-nav { font-size: 13px; padding: 16px 16px 0; }
+    #site-nav li { margin: 0 0 10px; }
+    /* Tables and code blocks scroll inside their own box instead of
+       stretching the page sideways. */
+    section table, section pre { max-width: 100%; overflow-x: auto; }
+    /* Very narrow columns left-align: justification needs room. */
+    section p, section li {
+      text-align: left;
+      hyphens: none;
+      -webkit-hyphens: none;
+    }
+  }
 </style>
 
 <!-- Post list rendered by Jekyll at build time (oldest first), hidden
@@ -126,10 +148,20 @@
         a.classList.add('current');
       }
     });
-    // Position the side panel below the banner using its real height.
+    // Make the banner exactly flush: full layout width, pinned to the
+    // left edge, regardless of how the theme nests its containers.
+    // Also publish its real height so the side panel starts below it.
     var banner = document.querySelector('section #title');
-    if (banner) {
+    function sizeBanner() {
+      if (!banner) return;
+      banner.style.marginLeft = '0';               // undo previous sizing first,
+      var left = banner.getBoundingClientRect().left; // then measure the true column edge
+      var w = document.documentElement.clientWidth; // viewport minus scrollbar gutter
+      banner.style.width = (w + 24) + 'px';
+      banner.style.marginLeft = (-left + 12) + 'px';
       document.documentElement.style.setProperty('--banner-h', banner.offsetHeight + 'px');
     }
+    sizeBanner();
+    window.addEventListener('resize', sizeBanner);
   });
 </script>

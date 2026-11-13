@@ -1,1 +1,17 @@
+# Agent instructions file (kept local, not published)
 AGENTS.md
+
+# --- Local Jekyll build artifacts (GitHub Pages builds on its own) ---
+_site/
+.jekyll-cache/
+.sass-cache/
+.jekyll-metadata
+vendor/
+logs/
+
+# --- Local build environment ---
+# GitHub's default Pages build manages its own gem versions, so the
+# Gemfile/Gemfile.lock exist only for the local test build and must
+# not be committed (committing them can override the default versions).
+Gemfile
+Gemfile.lock
