@@ -54,8 +54,15 @@
   /* Banner: one slim line with the site title, linking home. The tagline
      and the credits that used to sit here moved to the prose (index.md)
      and to the footer, so the banner no longer eats a slab of the
-     viewport on laptops and phones. Colors mirror the theme's own. */
+     viewport on laptops and phones. It is pinned to the top, so it
+     stays visible while the page scrolls. --banner-h keeps the sidebar
+     aligned under it: 7px top padding + 40px line + 8px bottom padding
+     + 4px border. Update it if the banner size changes. */
+  :root { --banner-h: 59px; }
   .site-banner {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     background: #2c2c2b;
     border-bottom: 4px solid #434343;
     padding: 7px 0 8px;
@@ -63,8 +70,8 @@
   .banner-title {
     font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: normal;
-    font-size: 26px;
-    line-height: 32px;
+    font-size: 32px;
+    line-height: 40px;
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 20px;
@@ -78,8 +85,8 @@
   .banner-title h1 {
     font-family: inherit;
     font-weight: normal;
-    font-size: 26px;
-    line-height: 32px;
+    font-size: 32px;
+    line-height: 40px;
     margin: 0;
   }
 
@@ -122,11 +129,11 @@
     display: block;
     flex: 0 0 240px;
     order: 1;
-    /* the sidebar follows the page as it scrolls, stopping 12px from
-       the top; a very long list scrolls inside its own box */
+    /* the sidebar follows the page as it scrolls, stopping just under
+       the pinned banner; a very long list scrolls inside its own box */
     position: sticky;
-    top: 12px;
-    max-height: calc(100vh - 24px);
+    top: calc(var(--banner-h) + 12px);
+    max-height: calc(100vh - var(--banner-h) - 24px);
     overflow-y: auto;
     font-size: 12px;
     line-height: 1.5;
@@ -254,7 +261,8 @@
 
   /* Phone portrait: tighter banner, comfortable tap spacing. */
   @media (max-width: 720px) {
-    .banner-title { font-size: 20px; line-height: 26px; }
+    :root { --banner-h: 49px; } /* 7 + 30 line + 8 + 4 at the phone font size */
+    .banner-title { font-size: 24px; line-height: 30px; }
     #site-nav { font-size: 13px; }
     #site-nav li { margin: 0 0 10px; }
   }
