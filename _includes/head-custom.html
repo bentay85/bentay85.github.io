@@ -29,8 +29,7 @@
 
   /* Justified prose within the theme's 650px column, on every page.
      Hyphenation keeps the edges clean at this width. Code blocks are
-     excluded (justified code looks broken); the site title keeps its
-     centered alignment via the theme's own #title rules. */
+     excluded (justified code looks broken). */
   section p, section li {
     text-align: justify;
     hyphens: auto;
@@ -38,16 +37,32 @@
   }
   section pre { text-align: left; }
 
-  /* Post navigation panel: fixed side panel on wide screens, in the
-     empty space left and right of the centered 650px column. Below
-     1220px it would collide with the column, so instead it becomes a
-     normal block at the bottom of every page. */
+  /* Site banner: turn the theme's title block (site title,
+     description, credits) into a banner that spans the full viewport
+     width and sits above the content and the side panel. The wide
+     negative margin stretches it out of the 650px column. */
+  section #title {
+    width: calc(100vw + 24px);
+    margin: 0 0 30px calc(50% - 50vw - 12px);
+    padding: 24px 40px 14px;
+    box-sizing: border-box;
+    background: #2c2c2b;
+    border-bottom: 4px solid #434343;
+  }
+  section #title h1 { margin-bottom: 6px; }
+  section #title .credits { margin-top: 4px; }
+
+  /* Post navigation panel: fixed side panel below the banner, in the
+     empty space left of the centered 650px column. --banner-h is set
+     by the script below to the banner's real height. Below 1220px a
+     side panel would collide with the column, so it becomes a normal
+     block at the bottom of every page instead. */
   #site-nav {
     position: fixed;
-    top: 30px;
+    top: calc(var(--banner-h, 190px) + 16px);
     left: 24px;
     width: 230px;
-    max-height: calc(100vh - 60px);
+    max-height: calc(100vh - var(--banner-h, 190px) - 32px);
     overflow-y: auto;
     border-left: 3px solid #434343;
     padding-left: 12px;
@@ -80,13 +95,13 @@
   }
 </style>
 
-<!-- Post list rendered by Jekyll at build time, hidden in a template
-     and moved into the page body by the script below. -->
+<!-- Post list rendered by Jekyll at build time (oldest first), hidden
+     in a template and moved into the page body by the script below. -->
 <template id="site-nav-template">
   <nav id="site-nav" aria-label="Site posts">
     <a class="nav-home" href="{{ '/' | relative_url }}">Home - all posts</a>
     <ul>
-      {% for post in site.posts %}
+      {% for post in site.posts reversed %}
       <li>
         <a href="{{ post.url | relative_url }}">
           <span class="nav-date">{{ post.date | date: "%Y-%m-%d" }}</span>
@@ -100,8 +115,9 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var t = document.getElementById('site-nav-template');
-    if (!t) return;
-    document.body.appendChild(t.content.cloneNode(true));
+    if (t) {
+      document.body.appendChild(t.content.cloneNode(true));
+    }
     // Highlight the link for the page being viewed.
     var here = location.pathname.replace(/\/+$/, '');
     document.querySelectorAll('#site-nav a').forEach(function (a) {
@@ -110,5 +126,10 @@
         a.classList.add('current');
       }
     });
+    // Position the side panel below the banner using its real height.
+    var banner = document.querySelector('section #title');
+    if (banner) {
+      document.documentElement.style.setProperty('--banner-h', banner.offsetHeight + 'px');
+    }
   });
 </script>
