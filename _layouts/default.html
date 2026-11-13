@@ -15,15 +15,23 @@
     <div class="site-banner">
       <div class="banner-title">
         {% if page.layout == 'post' %}
-          <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+          <a href="{{ '/' | relative_url }}"><img class="banner-logo" src="https://i.postimg.cc/y86w6yDT/icon.png" alt=""> {{ site.title }}</a>
         {% else %}
-          <h1><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
+          <h1><a href="{{ '/' | relative_url }}"><img class="banner-logo" src="https://i.postimg.cc/y86w6yDT/icon.png" alt=""> {{ site.title }}</a></h1>
         {% endif %}
       </div>
     </div>
 
     <div class="wrapper">
-      <nav id="site-nav" aria-label="Site posts">
+      <nav id="site-nav" aria-label="Site navigation">
+        <ul class="nav-pages">
+          <li>
+            <a{% if page.url == '/' %} class="current"{% endif %} href="{{ '/' | relative_url }}">Home</a>
+          </li>
+          <li>
+            <a{% if page.url == '/about/' %} class="current"{% endif %} href="{{ '/about/' | relative_url }}">About Me</a>
+          </li>
+        </ul>
         <ul>
           {% for post in site.posts reversed %}
           <li>
@@ -37,7 +45,6 @@
           </li>
           {% endfor %}
         </ul>
-        <a class="nav-home" href="{{ '/' | relative_url }}">Back to Home</a>
       </nav>
 
       <section>

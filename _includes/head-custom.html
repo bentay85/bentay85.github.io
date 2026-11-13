@@ -79,6 +79,17 @@
   }
   .banner-title a { color: #e8e8e8; text-decoration: none; }
   .banner-title a:hover { color: #ffeb9b; }
+  /* Site icon in front of the title. Kept inside the 40px line box
+     (vertical-align: middle puts its center on the text's midline, so
+     a 32px tall image spans 8px above and below the text midline -
+     still inside the line-height), so --banner-h never changes. */
+  .banner-logo {
+    display: inline-block;
+    height: 32px;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
   /* On the home page the banner title is the page's only h1 (post pages
      take their h1 from the post heading, so there the banner is just
      styled text). Kill the theme's big h1 styles here. */
@@ -138,12 +149,14 @@
     font-size: 12px;
     line-height: 1.5;
   }
-  #site-nav .nav-home {
-    display: block;
-    font-size: 14px;
-    color: #ffcc00;
-    margin: 12px 0 0;
-    text-align: center;
+  /* Home / About Me links, above the post list, separated from it by
+     a rule. Slightly larger than the post entries so they read as the
+     primary links. */
+  #site-nav .nav-pages { margin: 0 0 12px; }
+  #site-nav .nav-pages a { font-size: 14px; }
+  #site-nav ul + ul {
+    border-top: 3px solid #434343;
+    padding-top: 12px;
   }
   #site-nav ul { list-style: none; margin: 0; padding: 0; }
   #site-nav li { margin: 0 0 7px; }
@@ -259,10 +272,12 @@
     #site-nav ul { margin: 10px 0 0; }
   }
 
-  /* Phone portrait: tighter banner, comfortable tap spacing. */
+  /* Phone portrait: comfortable tap spacing. The banner title is NOT
+     shrunk here: the theme renders it inside an h1 on the home page,
+     and .banner-title h1 outranks a .banner-title override, so the
+     only way to keep the size consistent between the home page and
+     the posts is to keep 32px at every width. */
   @media (max-width: 720px) {
-    :root { --banner-h: 49px; } /* 7 + 30 line + 8 + 4 at the phone font size */
-    .banner-title { font-size: 24px; line-height: 30px; }
     #site-nav { font-size: 13px; }
     #site-nav li { margin: 0 0 10px; }
   }
