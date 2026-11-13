@@ -15,12 +15,8 @@
   #header { display: none; }
 
   /* App shell on wide screens: the page itself never scrolls, the
-     content column does. Reserve a stable scrollbar lane so the
-     centered layout never shifts; paint it dark with the theme. */
-  html { height: 100%; scrollbar-gutter: stable; }
-  @supports not (scrollbar-gutter: stable) {
-    html { overflow-y: scroll; }
-  }
+     content column does. No scrollbar lane on the page edge at all. */
+  html { height: 100%; }
   body {
     height: 100%;
     padding: 0;
@@ -29,11 +25,10 @@
     grid-template-rows: auto minmax(0, 1fr);
   }
 
-  /* The reserved gutter is painted as a light Windows scrollbar
-     track, which shows as a white bar next to this dark theme.
-     Declare the page as dark so browsers render the scrollbar and
-     its reserved lane dark, and style the WebKit track/thumb to
-     match the theme colors on Chrome/Edge. */
+  /* Dark scrollbars: the content column's own scrollbar on wide
+     screens, and the document scrollbar on narrow ones. Declare the
+     page as dark so native scrollbar parts render dark, and style the
+     WebKit track/thumb to match the theme colors on Chrome/Edge. */
   html { color-scheme: dark; }
   ::-webkit-scrollbar { width: 14px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -57,7 +52,9 @@
   #title {
     background: #2c2c2b;
     border-bottom: 4px solid #434343;
-    padding: 10px 40px 14px;
+    /* Keep the credits at the edges of the centered 1000px content
+       group, not at the far edges of a wide screen. */
+    padding: 10px max(40px, calc((100% - 1000px) / 2)) 14px;
     margin: 0;
   }
   #title::after { content: ""; display: table; clear: both; } /* contain the floated credits */
@@ -85,7 +82,7 @@
     align-items: stretch;
     gap: 36px;
     max-width: 1000px;
-    padding: 30px 20px 20px;
+    padding: 12px 20px 20px;
     min-height: 0;
   }
   .wrapper section {
@@ -93,6 +90,9 @@
     order: 2;
     min-width: 0;
     overflow-y: auto;
+    /* kill the theme's 70px margin-top and 30px padding-top on section */
+    margin: 0;
+    padding: 0 0 50px;
   }
   #site-nav {
     flex: 0 0 240px;
@@ -118,14 +118,20 @@
   #site-nav .nav-date { color: #696969; }
 
   /* Too narrow for the beside layout: back to normal page scrolling,
-     content first, post list at the bottom of the page. */
+     content first, post list at the bottom of the page. The scrollbar
+     lane is reserved here (the document scrolls again) so short and
+     long pages never shift horizontally. */
   @media (max-width: 1030px) {
+    html { scrollbar-gutter: stable; }
+    @supports not (scrollbar-gutter: stable) {
+      html { overflow-y: scroll; }
+    }
     body { display: block; overflow: auto; height: auto; }
     .wrapper {
       flex-direction: column;
       align-items: stretch;
       gap: 0;
-      padding: 20px 20px 0;
+      padding: 12px 20px 0;
     }
     .wrapper section { flex: none; overflow: visible; }
     #site-nav {
