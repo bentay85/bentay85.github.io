@@ -24,12 +24,20 @@
 
     <div class="wrapper">
       <nav id="site-nav" aria-label="Site navigation">
+        <!-- Icon + two-line site name. Hidden while the top banner is
+             shown; at wide widths the banner is removed and this takes
+             its place at the top of the panel. Same home-link logic as
+             the banner: an h1 on pages without their own heading. -->
+        <div class="nav-brand">
+          {% if page.layout == 'post' %}
+            <a class="banner-link" href="{{ '/' | relative_url }}"><img class="banner-logo" src="https://i.postimg.cc/y86w6yDT/icon.png" alt=""><span class="banner-name">Ben’s Tech<br>Notebook</span></a>
+          {% else %}
+            <h1><a class="banner-link" href="{{ '/' | relative_url }}"><img class="banner-logo" src="https://i.postimg.cc/y86w6yDT/icon.png" alt=""><span class="banner-name">Ben’s Tech<br>Notebook</span></a></h1>
+          {% endif %}
+        </div>
         <ul class="nav-pages">
           <li>
             <a{% if page.url == '/' %} class="current"{% endif %} href="{{ '/' | relative_url }}">Home</a>
-          </li>
-          <li>
-            <a{% if page.url == '/about/' %} class="current"{% endif %} href="{{ '/about/' | relative_url }}">About Me</a>
           </li>
         </ul>
         <ul>

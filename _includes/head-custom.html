@@ -6,13 +6,16 @@
      built by Jekyll - no template + script rearranging.
 
      Layout model:
+       Narrow (<1031px, including phones): the top banner is shown.
        body (normal document flow, the page scrolls normally, so
        keyboard scrolling works)
        ├── .site-banner  icon + two-line site name, links back home
        ├── .wrapper flex row: #site-nav (sticky post list) | section
        └── .site-footer  credits, at the bottom of the page
-       Narrow screens (<1031px) stack the columns, post list below
-       the content. -->
+       Narrow screens stack the columns, post list below the
+       content. Wide (>=1031px): the banner is removed and the icon +
+       site name (.nav-brand) sit at the top of the left panel, with
+       the sticky post list below them. -->
 <style>
   /* The midnight theme never sets box-sizing, so every element is
      content-box: padding is added *outside* a max-width, and a column
@@ -53,11 +56,11 @@
 
   /* Banner: the site name on two left-aligned lines with the site
      icon beside them, the whole thing linking home. It is pinned to
-     the top, so it stays visible while the page scrolls. --banner-h
-     keeps the sidebar aligned under it: 7px top padding + 80px text
-     block (two 40px lines) + 8px bottom padding + 4px border. Update
-     it if the banner size changes. */
-  :root { --banner-h: 99px; }
+     the top, so it stays visible while the page scrolls, and it is
+     shown only at narrow widths (hidden from 1031px up, see the wide
+     media query further down, where .nav-brand takes its place in
+     the sidebar). Banner height: 7px top padding + 80px text block
+     (two 40px lines) + 8px bottom padding + 4px border. */
   .site-banner {
     position: sticky;
     top: 0;
@@ -79,8 +82,8 @@
   .banner-title a { color: #e8e8e8; text-decoration: none; }
   .banner-title a:hover { color: #ffeb9b; }
   /* Icon and the two-line name side by side. The icon is as tall as
-     the two text lines (2 x 40px line-height), so it never makes the
-     banner taller than --banner-h expects. */
+     the two text lines (2 x 40px line-height), so the banner is
+     exactly as tall as its padding + text block. */
   .banner-link {
     display: flex;
     align-items: center;
@@ -100,8 +103,43 @@
     margin: 0;
   }
 
-  /* Row layout: post list beside the content, the pair centered under
-     the banner, growing with the window up to 1280px (half of 1440p)
+  /* Sidebar brand: the same icon + two-line name as the banner,
+     shown only at wide widths where the banner is hidden (see the
+     wide media query further down); display:none elsewhere keeps it
+     out of the mobile reading order. Reuses the banner's flex/link
+     classes. Slightly smaller than the banner so the whole thing
+     fits the 240px panel: 72px icon + 12px gap + the name's longest
+     line ("Ben's Tech", about 135px at 28px) is inside 240px. A
+     bottom border echoes the banner's, keeping the brand visually
+     separate from the Home link and post list below. */
+  .nav-brand {
+    display: none;
+    font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    font-size: 28px;
+    line-height: 36px;
+    text-align: left;
+    border-bottom: 4px solid #434343;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .nav-brand a { color: #e8e8e8; text-decoration: none; }
+  .nav-brand a:hover { color: #ffeb9b; }
+  .nav-brand .banner-link { column-gap: 12px; }
+  .nav-brand .banner-logo { height: 72px; }
+  .nav-brand .banner-name { line-height: 36px; }
+  /* Kill the theme's h1 styles, same as on the banner title: this
+     h1 only exists on pages without their own heading. */
+  .nav-brand h1 {
+    font-family: inherit;
+    font-weight: normal;
+    font-size: 28px;
+    line-height: 36px;
+    margin: 0;
+  }
+
+  /* Row layout: post list beside the content, the pair centered,
+     growing with the window up to 1280px (half of 1440p)
      and stopping there - the text column absorbs the extra width up
      to that point for reading comfort. */
   .wrapper {
@@ -139,16 +177,18 @@
     display: block;
     flex: 0 0 240px;
     order: 1;
-    /* the sidebar follows the page as it scrolls, stopping just under
-       the pinned banner; a very long list scrolls inside its own box */
+    /* the sidebar follows the page as it scrolls, stopping 12px from
+       the top of the window (at these widths the banner is gone, see
+       the wide media query); a very long list scrolls inside its own
+       box */
     position: sticky;
-    top: calc(var(--banner-h) + 12px);
-    max-height: calc(100vh - var(--banner-h) - 24px);
+    top: 12px;
+    max-height: calc(100vh - 24px);
     overflow-y: auto;
     font-size: 12px;
     line-height: 1.5;
   }
-  /* Home / About Me links, above the post list, separated from it by
+  /* Home link, above the post list, separated from it by
      a rule. Slightly larger than the post entries so they read as the
      primary links. */
   #site-nav .nav-pages { margin: 0 0 12px; }
@@ -244,6 +284,14 @@
   }
   .code-holder .copy-btn:hover { color: #ffeb9b; border-color: #696969; }
   .code-holder .copy-btn.copied { color: #7ac74f; border-color: #7ac74f; }
+
+  /* Wide layout (>=1031px), where the post list becomes the left
+     panel: drop the top banner entirely and let the sidebar brand
+     (.nav-brand) carry the icon + site name. */
+  @media (min-width: 1031px) {
+    .site-banner { display: none; }
+    .nav-brand { display: block; }
+  }
 
   /* Too narrow for the beside layout: stack the columns, content
      first, post list at the bottom of the page. */
