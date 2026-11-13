@@ -32,7 +32,16 @@ Most of what I learn ends up written up here as I go: [wiring MCP servers into L
 
 I game both with a headset on and without one. On the flat screen I gravitate toward story-driven single-player games: RPGs and cinematic adventures with characters worth rooting for, from classic JRPGs to modern western RPGs (the Final Fantasy and Dragon Age series, Mass Effect, Nier Automata, The Witcher 3). I also have the patience for the long ones: the MMO grind (World of Warcraft, The Elder Scrolls Online) and turn-based tactics played at my own pace (Divinity: Original Sin 2, XCOM 2). In VR, what I love is what VR alone can do: real roomscale presence, hands-on interaction, and atmosphere that gets under your skin.
 
-A few all-time favourites: **Eye of the Temple** — no other VR game delivers an equivalent roomscale experience; **Ghost Town** — storytelling and atmosphere that made my hair stand on end; **Half-Life: Alyx** — very polished VR interaction, great story; **Titanfall 2** and its **VR mod** — this is just epic; **Moss** and **Moss: Book II** — kept me engaged and rooting for Quill; **Nier Automata**; **The Witcher 3: Wild Hunt**; and **Divinity: Original Sin 2**.
+A few all-time favourites:
+
+- **Eye of the Temple** — no other VR game delivers an equivalent roomscale experience.
+- **Ghost Town** — storytelling and atmosphere that made my hair stand on end.
+- **Half-Life: Alyx** — very polished VR interaction, great story.
+- **Titanfall 2** and its **VR mod** — this is just epic.
+- **Moss** and **Moss: Book II** — kept me engaged and rooting for Quill.
+- **Nier Automata**
+- **The Witcher 3: Wild Hunt**
+- **Divinity: Original Sin 2**
 
 ## 3D printing
 
