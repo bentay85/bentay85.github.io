@@ -16,6 +16,17 @@
     html { overflow-y: scroll; }
   }
 
+  /* The reserved gutter is painted as a light Windows scrollbar
+     track, which shows as a white bar next to this dark theme.
+     Declare the page as dark so browsers render the scrollbar and
+     its reserved lane dark, and style the WebKit track/thumb to
+     match the theme colors on Chrome/Edge. */
+  html { color-scheme: dark; }
+  ::-webkit-scrollbar { width: 14px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #434343; border-radius: 7px; }
+  ::-webkit-scrollbar-thumb:hover { background: #555555; }
+
   /* Justified prose within the theme's 650px column, on every page.
      Hyphenation keeps the edges clean at this width. Code blocks are
      excluded (justified code looks broken); the site title keeps its
@@ -26,4 +37,78 @@
     -webkit-hyphens: auto;
   }
   section pre { text-align: left; }
+
+  /* Post navigation panel: fixed side panel on wide screens, in the
+     empty space left and right of the centered 650px column. Below
+     1220px it would collide with the column, so instead it becomes a
+     normal block at the bottom of every page. */
+  #site-nav {
+    position: fixed;
+    top: 30px;
+    left: 24px;
+    width: 230px;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    border-left: 3px solid #434343;
+    padding-left: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  #site-nav .nav-home {
+    display: block;
+    font-size: 14px;
+    color: #ffcc00;
+    margin-bottom: 10px;
+  }
+  #site-nav ul { list-style: none; margin: 0; padding: 0; }
+  #site-nav li { margin: 0 0 7px; }
+  #site-nav a { color: #d7cfbe; text-decoration: none; display: block; }
+  #site-nav a:hover { color: #ffeb9b; }
+  #site-nav a.current { color: #ffcc00; }
+  #site-nav .nav-date { color: #696969; }
+  @media (max-width: 1220px) {
+    #site-nav {
+      position: static;
+      width: auto;
+      max-width: 650px;
+      max-height: none;
+      margin: 30px auto 0;
+      border-left: none;
+      border-top: 3px solid #434343;
+      padding: 16px 20px 0;
+    }
+  }
 </style>
+
+<!-- Post list rendered by Jekyll at build time, hidden in a template
+     and moved into the page body by the script below. -->
+<template id="site-nav-template">
+  <nav id="site-nav" aria-label="Site posts">
+    <a class="nav-home" href="{{ '/' | relative_url }}">Home - all posts</a>
+    <ul>
+      {% for post in site.posts %}
+      <li>
+        <a href="{{ post.url | relative_url }}">
+          <span class="nav-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+          {{ post.title }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</template>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var t = document.getElementById('site-nav-template');
+    if (!t) return;
+    document.body.appendChild(t.content.cloneNode(true));
+    // Highlight the link for the page being viewed.
+    var here = location.pathname.replace(/\/+$/, '');
+    document.querySelectorAll('#site-nav a').forEach(function (a) {
+      var href = a.getAttribute('href').replace(/\/+$/, '');
+      if (href === here || '/' + href === here || (here === '' && href === '/')) {
+        a.classList.add('current');
+      }
+    });
+  });
+</script>
