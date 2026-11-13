@@ -24,7 +24,7 @@ irm -TimeoutSec 120 https://github.com/Niko1221/Strata/releases/latest/download/
 
 Open a new terminal afterwards, then launch:
 
-```
+```powershell
 strata launch
 ```
 
@@ -34,7 +34,7 @@ Follow the prompts to pick and download a model. I use **Qwen3.8-Flash-Next in t
 
 Strata exposes an OpenAI-compatible (and Anthropic-compatible) server at `http://127.0.0.1:8080/v1`. To wire it into a coding tool, start the terminal app:
 
-```
+```powershell
 strata launch
 ```
 

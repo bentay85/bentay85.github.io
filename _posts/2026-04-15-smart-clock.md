@@ -10,13 +10,10 @@ My wife recently got me a [desk clock and calendar](https://manuals.plus/tuya/sm
 
 To bridge the gap between Windows and the IR blaster, I used:
 
-*   **The Smart IR Device**: A Tuya-compatible clock and IR blaster.
-    
-*   **Python & TinyTuya**: A library used to interact with the device locally.
-    
-*   **Batch Scripts**: To trigger the Python logic.
-    
-*   **Group Policy Editor (gpedit.msc)**: To run scripts at startup and shutdown.
+* **The Smart IR Device**: A Tuya-compatible clock and IR blaster.
+* **Python & TinyTuya**: A library used to interact with the device locally.
+* **Batch Scripts**: To trigger the Python logic.
+* **Group Policy Editor (gpedit.msc)**: To run scripts at startup and shutdown.
 
 ### Device Setup  
 
@@ -34,7 +31,7 @@ You must first link your devices to a Tuya Developer account. This only needs to
 
 ### Python and tinytuya  
 1. Install [python](https://www.python.org/downloads/) on your PC. Run the following code to install the tinytuya library and run the wizard to retrieve information about your smart IR device.
-```
+```powershell
 pip install tinytuya
 python -m tinytuya wizard  
 ```  
@@ -48,7 +45,7 @@ python -m tinytuya wizard
 
 First you need to learn the base64-encoded string for the power button. Run the script below and point your TV remote at the Smart IR device and press the power button. Take down the raw IR code which will be used in the next script to power on the TV through python.
 
-```
+```python
 import tinytuya
 import json
 d = tinytuya.Device('fill in smart IR device ID', 'fill in smart IR device IP address address', 'fill in smart IR device key')
@@ -61,7 +58,7 @@ print("Received Raw IR Code:", data)
 ```  
 
 The following script (saved as main.py) triggers the Smart IR device to send a signal to power on and off the TV. It connects to the device using a unique ID, IP address, and local key. It sets the protocol version to 3.5 and sends a base64-encoded IR string that corresponds to the TV's power button.
-```
+```python
 from tinytuya.Contrib import IRRemoteControlDevice
 
 d = IRRemoteControlDevice('fill in smart IR device ID', 'fill in smart IR device IP address', 'fill in smart IR device key', control_type=1)
@@ -78,13 +75,13 @@ Running the script using `python main.py` should turn off the TV. With your scre
 To make this hands-off, I created two batch files to handle the startup and shutdown triggers. These scripts use the uv Python package manager to execute the code.  
 
 This script runs when the computer starts up to ensure the TV turns on.  
-```
+```bat
 @echo off  
 cd /d "C:\path\to\your\project"  
 python main.py   
 ```
 This script runs during the Windows shutdown process. It can be configured with a flag (like --shutdown-mode) if your script needs to handle the "off" command differently.  
-```
+```bat
 @echo off  
 cd /d "C:\path\to\your\project"  
 python main.py --shutdown-mode

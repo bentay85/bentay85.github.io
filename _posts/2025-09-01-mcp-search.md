@@ -8,6 +8,8 @@ Refer to my previous post about giving a language model access to a calculator f
 
 In this post, I wanted to give the Language Model the capability to search the internet. This can be done by making a API call to Google Search and passing the relevant fields in the search results to the Language Model. See [link](https://developers.google.com/custom-search/v1/overview) for documentation on how to get a Google API Key and a Google Custom Search Engine ID. This is completely free to use, up to 100 searches a day. We will set the GOOGLE_API_KEY and the GOOGLE_CSE_ID up as Environment Variables so that we do not hardcode these into our Python script.  
 
+### The Search MCP Server
+
 ```python
 import os
 import json
@@ -53,7 +55,11 @@ if __name__ == "__main__":
     if api_key and cse_id:
         mcp.run()
 ```  
-mcp.json  
+
+### Configuring LM Studio to Use the Search Tool
+
+This was my mcp.json file:
+
 ```json
 {
   "mcpServers": {
@@ -67,7 +73,9 @@ mcp.json
 }
 ```  
 
-System Prompt:  
+### Teaching the Language Model to Use the Tool
+
+The System Prompt:
 ```
 You have access to a tool called google_search.
 

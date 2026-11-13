@@ -25,7 +25,7 @@ Termux is not on the Play Store in a working state, so I installed it the open-s
 
 To move files from Windows to the phone I ran an SSH server on the phone and connected with WinSCP. In Termux:
 
-```
+```bash
 pkg install openssh
 passwd
 sshd
@@ -33,7 +33,7 @@ sshd
 
 Set the password *before* starting the server, otherwise you cannot log in. Then find the phone's IP address - mine showed up on my router's homepage under connected devices - and check the username inside Termux with:
 
-```
+```bash
 whoami
 ```
 
@@ -73,7 +73,7 @@ Same lesson as the smart clock post: the phones' and PC's scripts find the devic
 
 The heart of the project is a single Python script, `home_group.py`, with three actions:
 
-```
+```text
 ~/automation/home_group.py on
 ~/automation/home_group.py off
 ~/automation/home_group.py status
@@ -119,7 +119,7 @@ The write to the IR box uses `nowait=True` because this box never answers a writ
 
 An `install.sh` puts everything in place in one go: it copies `home_group.py` and `config.toml` to `~/automation/`, copies the shortcuts to `~/.shortcuts/` (where current Termux:Widget looks; older builds used `~/bin/`), strips any CRLF line endings, marks everything executable, and installs the Python dependencies:
 
-```
+```bash
 pkg install python
 pip install 'python-miio>=0.5.12,<0.6' 'tinytuya>=1.20.0,<2'
 ```

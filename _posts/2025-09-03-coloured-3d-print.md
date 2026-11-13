@@ -8,6 +8,8 @@ title: "Coloured 3D Print from an Image"
 
 The workflow uses AI to generate a 3D model with textures. The textures are then baked into Vertex Colors so the model imports into Bambu Studio seamlessly. Some manual painting is still necessary to make the model look perfect for printing, but this method saves a huge amount of time compared to painting the entire model manually.  
 
+### The Workflow
+
 1. **Start with an image** of the object you want to 3D print. This can be a photo or an AI-generated image.  
 
 2. **Generate the 3D model.** I use [Hitem3D](https://hitem3d.ai/) to convert the image into a 3D model. It’s a paid service but provides 100 free credits, enough for two high resolution textured generations. I generated at 1536 resolution with textures enabled and downloaded the model in OBJ format. The geometry is very high resolution, so it should be reduced to save computation time. Link to the generated model: [link](https://hitem3d.ai/share/3d-models-generator/a/Q8A3DFD).  
@@ -36,5 +38,7 @@ The workflow uses AI to generate a 3D model with textures. The textures are then
 7. **Fine-tune colors.** Use the Color Painting Tool to adjust any areas manually. Slice once without supports to check how the model will look.  
 
 8. **Finalize for printing.** Turn on supports and slice again. Your model is ready to print.  
+
+### Conclusion
 
 Hopefully, this workflow helps those looking to convert images into colored 3D prints. For reference, here’s a link to the 3MF file after merging colors but before any manual painting adjustments: [link](https://drive.google.com/file/d/1kBMX5wLk9RgF2R-EVYFewbJIpwlKUE5u/view?usp=drive_link)  
