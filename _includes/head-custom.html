@@ -42,13 +42,17 @@
   }
   ::-webkit-scrollbar-thumb:hover { background-color: #555555; }
 
-  /* Justified prose within the content column, on every page.
-     Hyphenation keeps the edges clean at this width. Code blocks are
+  /* Justified prose within the content column, on every page, at
+     every width. Words are never hyphenated: a word that does not
+     fit moves whole to the next line, and the line is stretched to
+     fill the width. overflow-wrap: break-word only breaks a token
+     longer than a whole line (a very long URL). Code blocks are
      excluded (justified code looks broken). */
   section p, section li {
     text-align: justify;
-    hyphens: auto;
-    -webkit-hyphens: auto;
+    hyphens: none;
+    -webkit-hyphens: none;
+    overflow-wrap: break-word;
   }
   section pre { text-align: left; }
 
@@ -114,6 +118,7 @@
     font-size: 14px;
     color: #ffcc00;
     margin: 12px 0 0;
+    text-align: center;
   }
   #site-nav ul { list-style: none; margin: 0; padding: 0; }
   #site-nav li { margin: 0 0 7px; }
@@ -128,6 +133,14 @@
   #site-nav a:hover { color: #ffeb9b; }
   #site-nav a.current { color: #ffcc00; }
   #site-nav .nav-date { color: #696969; }
+  /* Date column: fixed width, never wraps, two stacked lines
+     (year, then day+month) so every title starts at the same x. */
+  #site-nav .nav-date {
+    flex: 0 0 auto;
+    width: 3.4em;
+    white-space: nowrap;
+  }
+  #site-nav .nav-date > span { display: block; }
 
   /* Too narrow for the beside layout: back to normal page scrolling,
      content first, post list at the bottom of the page. The scrollbar
@@ -182,7 +195,10 @@
       {% for post in site.posts reversed %}
       <li>
         <a href="{{ post.url | relative_url }}">
-          <span class="nav-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+          <span class="nav-date">
+            <span class="nav-year">{{ post.date | date: "%Y" }}</span>
+            <span class="nav-day">{{ post.date | date: "%-d %b" }}</span>
+          </span>
           {{ post.title }}
         </a>
       </li>
