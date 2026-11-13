@@ -80,11 +80,11 @@ This script runs when the computer starts up to ensure the TV turns on.
 cd /d "C:\path\to\your\project"  
 python main.py   
 ```
-This script runs during the Windows shutdown process. It can be configured with a flag (like --shutdown-mode) if your script needs to handle the "off" command differently.  
+This script runs during the Windows shutdown process. The IR string is the power button of the TV’s own remote, which is a toggle, so the shutdown batch simply runs the same script again and the TV switches off. If your script needs to handle the "off" command differently, you can pass a flag (like --shutdown-mode) and branch on it with sys.argv.  
 ```bat
 @echo off  
 cd /d "C:\path\to\your\project"  
-python main.py --shutdown-mode
+python main.py
 ```
 
 ### Integrating with Windows  

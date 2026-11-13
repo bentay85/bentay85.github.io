@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'en-US' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    {% seo %}
+
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.github.build_revision }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% include head-custom.html %}
+  </head>
+  <body>
+    <div class="site-banner">
+      <div class="banner-title">
+        {% if page.layout == 'post' %}
+          <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+        {% else %}
+          <h1><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="wrapper">
+      <nav id="site-nav" aria-label="Site posts">
+        <ul>
+          {% for post in site.posts reversed %}
+          <li>
+            <a{% if post.url == page.url %} class="current"{% endif %} href="{{ post.url | relative_url }}">
+              <span class="nav-date">
+                <span class="nav-year">{{ post.date | date: '%Y' }}</span>
+                <span class="nav-day">{{ post.date | date: '%-d %b' }}</span>
+              </span>
+              {{ post.title }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        <a class="nav-home" href="{{ '/' | relative_url }}">Back to Home</a>
+      </nav>
+
+      <section>
+        {{ content }}
+      </section>
+    </div>
+
+    <div class="site-footer">
+      <div class="footer-inner">
+        <span>Project maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></span>
+        <span>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/mattgraham">mattgraham</a></span>
+      </div>
+    </div>
+  </body>
+</html>

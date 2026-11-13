@@ -1,50 +1,48 @@
 <!-- Site-wide customizations for jekyll-theme-midnight.
-     This file overrides the theme's own _includes/head-custom.html
-     (documented override for gem-based themes) and is injected into
-     the <head> of every page.
+     The midnight theme's default layout is replaced by our own
+     _layouts/default.html, so this file only layers CSS on top of the
+     theme's stylesheet and adds the copy buttons to code blocks.
+     Everything else (banner, post list, footer) is real page markup
+     built by Jekyll - no template + script rearranging.
 
-     Layout model (the script at the bottom rearranges the DOM to match):
-       body (grid, viewport height, no page scroll on wide screens)
-       ├── #title   banner, full width, flush top, stays fixed while reading
-       └── .wrapper flex row, centered: #site-nav (post list) | section
-            Only the section scrolls; the banner and post list stay put.
-       Narrow screens (<1031px) fall back to normal page scrolling
-       with the full post list at the bottom of the page. -->
+     Layout model:
+       body (normal document flow, the page scrolls normally, so
+       keyboard scrolling works)
+       ├── .site-banner  one slim title line, links back home
+       ├── .wrapper flex row: #site-nav (sticky post list) | section
+       └── .site-footer  credits, at the bottom of the page
+       Narrow screens (<1031px) stack the columns, post list below
+       the content. -->
 <style>
-  /* Remove the fixed top bar ("View On GitHub" button) on every page. */
-  #header { display: none; }
-
-  /* App shell on wide screens: the page itself never scrolls, the
-     content column does. No scrollbar lane on the page edge at all. */
-  html { height: 100%; }
-  body {
-    height: 100%;
-    padding: 0;
-    overflow: hidden;
-    display: grid;
-    /* minmax(0, 1fr): the single column can never become wider than the
-       window, no matter how wide the content inside it wants to be.
-       A plain `auto` column would grow past the viewport, and with
-       overflow:hidden on the body the excess is clipped away silently. */
-    grid-template-rows: auto minmax(0, 1fr);
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   /* The midnight theme never sets box-sizing, so every element is
      content-box: padding is added *outside* a max-width, and a column
      sized exactly to the window ends up wider than the window by its
-     own padding. Everything we size here is border-box instead. */
-  #title, .wrapper, .wrapper section, #site-nav { box-sizing: border-box; }
+     own padding. Standardize on border-box. */
+  *, *::before, *::after { box-sizing: border-box; }
 
-  /* Dark scrollbars: the content column's own scrollbar on wide
-     screens, and the document scrollbar on narrow ones. Declare the
-     page as dark so native scrollbar parts render dark, and style the
-     WebKit track/thumb to match the theme colors on Chrome/Edge. */
-  html { color-scheme: dark; scrollbar-width: thin; scrollbar-color: #434343 transparent; }
+  /* The page itself scrolls (no app-shell with a hidden body), so
+     space / Page Down / arrow keys work as usual. The sidebar stays
+     beside the text with position: sticky below. */
+  html {
+    color-scheme: dark;
+    scrollbar-width: thin;
+    scrollbar-color: #434343 transparent;
+    /* Always reserve the scrollbar lane so short and long pages never
+       shift horizontally; the fallback covers browsers without
+       scrollbar-gutter. */
+    scrollbar-gutter: stable;
+  }
+  @supports not (scrollbar-gutter: stable) {
+    html { overflow-y: scroll; }
+  }
+  body { max-width: none; margin: 0; padding: 0; }
+
+  /* Dark scrollbars: declare the page as dark so native scrollbar
+     parts render dark, and style the WebKit track/thumb to match the
+     theme colors on Chrome/Edge. The 3px transparent border creates
+     space between text and the slim thumb. */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  /* Slim visible thumb (4px) centered in a 10px lane: the 3px
-     transparent border creates space between text and the bar. */
   ::-webkit-scrollbar-thumb {
     background: #434343;
     background-clip: padding-box;
@@ -52,6 +50,140 @@
     border-radius: 5px;
   }
   ::-webkit-scrollbar-thumb:hover { background-color: #555555; }
+
+  /* Banner: one slim line with the site title, linking home. The tagline
+     and the credits that used to sit here moved to the prose (index.md)
+     and to the footer, so the banner no longer eats a slab of the
+     viewport on laptops and phones. Colors mirror the theme's own. */
+  .site-banner {
+    background: #2c2c2b;
+    border-bottom: 4px solid #434343;
+    padding: 7px 0 8px;
+  }
+  .banner-title {
+    font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    font-size: 26px;
+    line-height: 32px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+  .banner-title a { color: #e8e8e8; text-decoration: none; }
+  .banner-title a:hover { color: #ffeb9b; }
+  /* On the home page the banner title is the page's only h1 (post pages
+     take their h1 from the post heading, so there the banner is just
+     styled text). Kill the theme's big h1 styles here. */
+  .banner-title h1 {
+    font-family: inherit;
+    font-weight: normal;
+    font-size: 26px;
+    line-height: 32px;
+    margin: 0;
+  }
+
+  /* Row layout: post list beside the content, the pair centered under
+     the banner, growing with the window up to 1280px (half of 1440p)
+     and stopping there - the text column absorbs the extra width up
+     to that point for reading comfort. */
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 36px;
+    /* border-box, so 1280px is the whole group including its own
+       padding; width:100% keeps it inside a narrower window. */
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 12px 20px 28px;
+  }
+  .wrapper section {
+    /* take all the width left next to the 240px panel; max-width:none
+       releases the theme's own `section { max-width: 650px }` cap */
+    flex: 1 1 640px;
+    max-width: none;
+    min-width: 0;
+    order: 2;
+    /* the column itself never scrolls sideways; a wide code block
+       scrolls inside its own box instead of pushing text off screen
+       (hidden is the fallback for browsers without clip) */
+    overflow-x: hidden;
+    overflow-x: clip;
+    /* kill the theme's margin-top and padding-top on section */
+    margin: 0;
+    padding: 0 14px 0 0;
+  }
+  #site-nav {
+    /* The theme hides all bare `nav` elements at <=480px (intended
+       for its header bar). display:block here outranks that type
+       selector at every width, so the post list is never hidden. */
+    display: block;
+    flex: 0 0 240px;
+    order: 1;
+    /* the sidebar follows the page as it scrolls, stopping 12px from
+       the top; a very long list scrolls inside its own box */
+    position: sticky;
+    top: 12px;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  #site-nav .nav-home {
+    display: block;
+    font-size: 14px;
+    color: #ffcc00;
+    margin: 12px 0 0;
+    text-align: center;
+  }
+  #site-nav ul { list-style: none; margin: 0; padding: 0; }
+  #site-nav li { margin: 0 0 7px; }
+  #site-nav a { color: #d7cfbe; text-decoration: none; display: block; }
+  /* Exact hanging indent: the date and title are two flex items, so
+     every wrapped title line aligns precisely with the first.
+     Titles left-align (the column is too narrow to justify without
+     large word gaps); dates right-align inside their fixed column. */
+  #site-nav li a {
+    display: flex;
+    align-items: baseline;
+    column-gap: 0.5em;
+    text-align: left;
+  }
+  #site-nav a:hover { color: #ffeb9b; }
+  #site-nav a.current { color: #ffcc00; }
+  /* Date column: fixed width, never wraps, two stacked lines
+     (year, then day+month) right-aligned toward the titles, so
+     every title starts at the same x. */
+  #site-nav .nav-date {
+    color: #696969;
+    flex: 0 0 auto;
+    width: 3.4em;
+    white-space: nowrap;
+    text-align: right;
+  }
+  #site-nav .nav-date > span { display: block; }
+
+  /* Footer: the credits the theme used to float inside the banner. */
+  .site-footer {
+    background: #2c2c2b;
+    border-top: 4px solid #434343;
+    padding: 12px 0 16px;
+    font-size: 11px;
+    color: #696969;
+  }
+  .site-footer .footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+  }
+  .site-footer a { color: #d7cfbe; text-decoration: none; }
+  .site-footer a:hover { color: #ffeb9b; }
 
   /* Justified prose within the content column, on every page, at
      every width. Words are never hyphenated: a word that does not
@@ -94,212 +226,42 @@
   .code-holder .copy-btn:hover { color: #ffeb9b; border-color: #696969; }
   .code-holder .copy-btn.copied { color: #7ac74f; border-color: #7ac74f; }
 
-  /* Banner: the theme's title block, moved to the top of the body by
-     the script, so it is naturally full width with no margin hacks.
-     Style values mirror the theme's own (which stop matching once the
-     block leaves the section, hence the re-declaration). */
-  #title {
-    background: #2c2c2b;
-    border-bottom: 4px solid #434343;
-    /* Keep the credits on the same vertical lines as the content group
-       below (which is capped at 1280px and has 20px of its own
-       padding), instead of at the far edges of a wide screen. */
-    padding: 10px max(20px, calc((100% - 1240px) / 2)) 14px;
-    margin: 0;
-  }
-  #title::after { content: ""; display: table; clear: both; } /* contain the floated credits */
-  #title hr { display: none; }                                /* the ====== separator */
-  #title h1 {
-    font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: normal; font-size: 40px; line-height: 44px;
-    color: #e8e8e8; text-align: center; margin: 4px 0 6px;
-  }
-  #title p {
-    font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: normal; font-size: 18px; color: #d7cfbe;
-    text-align: center; margin: 0;
-  }
-  #title .credits { font-size: 11px; color: #696969; margin-top: 12px; }
-  #title .credits.left { float: left; }
-  #title .credits.right { float: right; }
-
-  /* Row layout: post list beside the content, the pair centered
-     below the banner. The group grows with the window up to 1280px
-     (half of 1440p) and stops there - the text column absorbs the
-     extra width up to that point for reading comfort. The wrapper
-     fills the space under the banner; only the section scrolls. */
-  .wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    gap: 36px;
-    /* border-box, so 1280px is the whole group including its own
-       padding: the group stops growing at 1280px (half of 1440p).
-       width:100% keeps it inside a narrower window. */
-    width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 12px 20px 20px;
-    min-height: 0;
-    min-width: 0;
-  }
-  .wrapper section {
-    /* take all the width left next to the 240px panel; max-width:none
-       releases the theme's own `section { max-width: 650px }` cap */
-    flex: 1 1 640px;
-    max-width: none;
-    order: 2;
-    min-width: 0;
-    overflow-y: auto;
-    /* Always reserve the scrollbar lane inside the column. Without it,
-       a post long enough to scroll is 10px narrower than one that
-       isn't, so the prose jumps between pages under a banner that
-       never moves. */
-    scrollbar-gutter: stable;
-    /* the column itself never scrolls sideways; a wide code block
-       scrolls inside its own box instead of pushing text off screen
-       (hidden is the fallback for browsers without clip) */
-    overflow-x: hidden;
-    overflow-x: clip;
-    /* kill the theme's 70px margin-top and 30px padding-top on section */
-    margin: 0;
-    padding: 0 14px 50px 0;
-  }
-  #site-nav {
-    /* The theme hides all bare `nav` elements at <=480px (intended
-       for its header bar). display:block here outranks that type
-       selector at every width, so the post list is never hidden. */
-    display: block;
-    flex: 0 0 240px;
-    order: 1;
-    max-height: 100%;
-    overflow-y: auto;
-    font-size: 12px;
-    line-height: 1.5;
-  }
-  #site-nav .nav-home {
-    display: block;
-    font-size: 14px;
-    color: #ffcc00;
-    margin: 12px 0 0;
-    text-align: center;
-  }
-  #site-nav ul { list-style: none; margin: 0; padding: 0; }
-  #site-nav li { margin: 0 0 7px; }
-  #site-nav a { color: #d7cfbe; text-decoration: none; display: block; }
-  /* Exact hanging indent: the date and title are two flex items, so
-     every wrapped title line aligns precisely with the first.
-     Titles left-align (the column is too narrow to justify without
-     large word gaps); dates right-align inside their fixed column. */
-  #site-nav li a {
-    display: flex;
-    align-items: baseline;
-    column-gap: 0.5em;
-    text-align: left;
-  }
-  #site-nav a:hover { color: #ffeb9b; }
-  #site-nav a.current { color: #ffcc00; }
-  #site-nav .nav-date { color: #696969; }
-  /* Date column: fixed width, never wraps, two stacked lines
-     (year, then day+month) right-aligned toward the titles, so
-     every title starts at the same x. */
-  #site-nav .nav-date {
-    flex: 0 0 auto;
-    width: 3.4em;
-    white-space: nowrap;
-    text-align: right;
-  }
-  #site-nav .nav-date > span { display: block; }
-
-  /* Too narrow for the beside layout: back to normal page scrolling,
-     content first, post list at the bottom of the page. The scrollbar
-     lane is reserved here (the document scrolls again) so short and
-     long pages never shift horizontally. */
+  /* Too narrow for the beside layout: stack the columns, content
+     first, post list at the bottom of the page. */
   @media (max-width: 1030px) {
-    html { scrollbar-gutter: stable; }
-    @supports not (scrollbar-gutter: stable) {
-      html { overflow-y: scroll; }
-    }
-    body { display: block; overflow: auto; height: auto; }
     .wrapper {
       flex-direction: column;
       align-items: stretch;
       gap: 0;
       padding: 12px 20px 0;
     }
-    .wrapper section { flex: none; overflow: visible; padding-bottom: 0; }
+    .wrapper section { flex: none; order: 1; padding-bottom: 0; }
     /* no dead space between the end of the post and the list */
     .wrapper section > :last-child { margin-bottom: 0; }
     /* Post list moves to the bottom of the page, below the content. */
     #site-nav {
       flex: none;
       order: 2;
+      position: static;
       max-height: none;
-      margin: 24px auto 30px;
+      overflow: visible;
+      margin: 24px 0 10px;
       border-top: 3px solid #434343;
-      padding: 16px 20px 20px;
+      padding: 16px 0 0;
     }
     #site-nav ul { margin: 10px 0 0; }
-    .wrapper section { order: 1; }
   }
 
-  /* Phone portrait: tighter banner, comfortable tap spacing, and no
-     sideways page scroll from wide tables or code. */
+  /* Phone portrait: tighter banner, comfortable tap spacing. */
   @media (max-width: 720px) {
-    #title { padding: 8px 16px 12px; }
-    #title h1 { font-size: 28px; line-height: 34px; }
-    #title p { font-size: 15px; }
-    #title .credits { font-size: 11px; }
-    #site-nav { font-size: 13px; padding: 8px 16px; }
+    .banner-title { font-size: 20px; line-height: 26px; }
+    #site-nav { font-size: 13px; }
     #site-nav li { margin: 0 0 10px; }
   }
 </style>
 
-<!-- Post list rendered by Jekyll at build time (oldest first), hidden
-     in a template and moved into the page by the script below. -->
-<template id="site-nav-template">
-  <nav id="site-nav" aria-label="Site posts">
-    <ul>
-      {% for post in site.posts reversed %}
-      <li>
-        <a href="{{ post.url | relative_url }}">
-          <span class="nav-date">
-            <span class="nav-year">{{ post.date | date: "%Y" }}</span>
-            <span class="nav-day">{{ post.date | date: "%-d %b" }}</span>
-          </span>
-          {{ post.title }}
-        </a>
-      </li>
-      {% endfor %}
-    </ul>
-    <a class="nav-home" href="{{ '/' | relative_url }}">Back to Home</a>
-  </nav>
-</template>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var wrapper = document.querySelector('.wrapper');
-
-    // Move the banner out of the column to the top of the page.
-    var banner = document.querySelector('section #title');
-    if (banner && wrapper) {
-      document.body.insertBefore(banner, wrapper);
-    }
-
-    // Put the post list inside the flex wrapper, beside the content.
-    var t = document.getElementById('site-nav-template');
-    if (t && wrapper) {
-      wrapper.insertBefore(t.content.cloneNode(true), wrapper.firstChild);
-    }
-
-    // Highlight the link for the page being viewed.
-    var here = location.pathname.replace(/\/+$/, '');
-    document.querySelectorAll('#site-nav a').forEach(function (a) {
-      var href = a.getAttribute('href').replace(/\/+$/, '');
-      if (href === here || '/' + href === here || (here === '' && href === '/')) {
-        a.classList.add('current');
-      }
-    });
-
     // Copy button on every code block in the page content.
     document.querySelectorAll('section pre').forEach(function (pre) {
       var holder = document.createElement('div');
