@@ -1,16 +1,6 @@
 ---
 title: "Strata + OpenCode: A Local Coding Agent On A 4060 Ti"
 ---
-<style>
-  /* Justified prose with hyphenation so the edges stay clean.
-     Headings, code, tables and images keep their normal alignment. */
-  section p, section li {
-    text-align: justify;
-    hyphens: auto;
-    -webkit-hyphens: auto;
-  }
-</style>
-
 # Strata + OpenCode: A Local Coding Agent On A 4060 Ti
 
 I replaced the cloud LLM behind my coding agent with a model running entirely on my own machine. [Strata](https://github.com/Niko1221/Strata) serves a quantized Qwen model locally through an OpenAI-compatible API, and [OpenCode](https://opencode.ai/) - an open-source coding agent, for me in its desktop app - talks to it as if it were any other provider. Nothing leaves my PC except git pushes.

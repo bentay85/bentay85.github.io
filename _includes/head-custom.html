@@ -7,4 +7,23 @@
      and pull the page content up into the freed space. */
   #header { display: none; }
   section { margin-top: 30px; }
+
+  /* Stop the ~8px layout shift between pages that have a scrollbar
+     (long posts) and pages that don't (home): always reserve the
+     scrollbar gutter so the centered column never moves. */
+  html { scrollbar-gutter: stable; }
+  @supports not (scrollbar-gutter: stable) {
+    html { overflow-y: scroll; }
+  }
+
+  /* Justified prose within the theme's 650px column, on every page.
+     Hyphenation keeps the edges clean at this width. Code blocks are
+     excluded (justified code looks broken); the site title keeps its
+     centered alignment via the theme's own #title rules. */
+  section p, section li {
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+  section pre { text-align: left; }
 </style>
