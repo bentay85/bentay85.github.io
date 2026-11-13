@@ -125,7 +125,12 @@
   }
   .nav-brand a { color: #e8e8e8; text-decoration: none; }
   .nav-brand a:hover { color: #ffeb9b; }
-  .nav-brand .banner-link { column-gap: 12px; }
+  /* The post-list rule `#site-nav a { display: block }` outranks the
+     class-based .banner-link { display: flex }, which would leave the
+     icon and the name as plain inline flow ("Notebook" wrapping in
+     under the icon). Re-declare the flex layout with an ID-scoped
+     selector so it wins. */
+  #site-nav .nav-brand .banner-link { display: flex; column-gap: 12px; }
   .nav-brand .banner-logo { height: 72px; }
   .nav-brand .banner-name { line-height: 36px; }
   /* Kill the theme's h1 styles, same as on the banner title: this
