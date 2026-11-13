@@ -9,7 +9,7 @@
        └── .wrapper flex row, centered: #site-nav (post list) | section
             Only the section scrolls; the banner and post list stay put.
        Narrow screens (<1031px) fall back to normal page scrolling with
-       the post list at the bottom of the page. -->
+       a collapsed "All posts" toggle below the banner. -->
 <style>
   /* Remove the fixed top bar ("View On GitHub" button) on every page. */
   #header { display: none; }
@@ -29,11 +29,18 @@
      screens, and the document scrollbar on narrow ones. Declare the
      page as dark so native scrollbar parts render dark, and style the
      WebKit track/thumb to match the theme colors on Chrome/Edge. */
-  html { color-scheme: dark; }
-  ::-webkit-scrollbar { width: 14px; }
+  html { color-scheme: dark; scrollbar-width: thin; scrollbar-color: #434343 transparent; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #434343; border-radius: 7px; }
-  ::-webkit-scrollbar-thumb:hover { background: #555555; }
+  /* Slim visible thumb (4px) centered in a 10px lane: the 3px
+     transparent border creates space between text and the bar. */
+  ::-webkit-scrollbar-thumb {
+    background: #434343;
+    background-clip: padding-box;
+    border: 3px solid transparent;
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background-color: #555555; }
 
   /* Justified prose within the content column, on every page.
      Hyphenation keeps the edges clean at this width. Code blocks are
@@ -92,15 +99,13 @@
     overflow-y: auto;
     /* kill the theme's 70px margin-top and 30px padding-top on section */
     margin: 0;
-    padding: 0 0 50px;
+    padding: 0 14px 50px 0;
   }
   #site-nav {
     flex: 0 0 240px;
     order: 1;
     max-height: 100%;
     overflow-y: auto;
-    border-left: 3px solid #434343;
-    padding-left: 12px;
     font-size: 12px;
     line-height: 1.5;
   }
@@ -108,11 +113,23 @@
     display: block;
     font-size: 14px;
     color: #ffcc00;
-    margin-bottom: 10px;
+    margin: 12px 0 0;
   }
+  /* Desktop: the expand/collapse control is not needed, the list is
+     always visible. (The details element starts open; the script
+     closes it only on narrow screens.) */
+  #site-nav summary { display: none; }
   #site-nav ul { list-style: none; margin: 0; padding: 0; }
   #site-nav li { margin: 0 0 7px; }
   #site-nav a { color: #d7cfbe; text-decoration: none; display: block; }
+  /* Title wraps in a column beside the date: the date sits in a fixed
+     first-line slot, and every wrapped line starts after that slot,
+     so the space under the date stays blank. */
+  #site-nav li a {
+    padding-left: 6.3em;
+    text-indent: -6.3em;
+  }
+  #site-nav li a .nav-date { text-indent: 0; }
   #site-nav a:hover { color: #ffeb9b; }
   #site-nav a.current { color: #ffcc00; }
   #site-nav .nav-date { color: #696969; }
@@ -134,16 +151,25 @@
       padding: 12px 20px 0;
     }
     .wrapper section { flex: none; overflow: visible; }
+    /* Post list becomes a compact "All posts" toggle directly under
+       the banner, above the content - visible without scrolling. */
     #site-nav {
       flex: none;
-      order: 2;
+      order: 0;
       max-height: none;
-      margin: 30px auto 20px;
+      margin: 0 auto;
       max-width: 650px;
-      border-left: none;
-      border-top: 3px solid #434343;
-      padding: 16px 20px 20px;
+      border-bottom: 3px solid #434343;
+      padding: 8px 20px;
     }
+    #site-nav summary {
+      display: block;
+      font-size: 14px;
+      color: #ffcc00;
+      cursor: pointer;
+    }
+    #site-nav ul { margin: 10px 0 0; }
+    .wrapper section { order: 2; }
   }
 
   /* Phone portrait: tighter banner, comfortable tap spacing, and no
@@ -153,7 +179,7 @@
     #title h1 { font-size: 28px; line-height: 34px; }
     #title p { font-size: 15px; }
     #title .credits { font-size: 11px; }
-    #site-nav { font-size: 13px; padding: 16px 16px 20px; }
+    #site-nav { font-size: 13px; padding: 8px 16px; }
     #site-nav li { margin: 0 0 10px; }
     section table, section pre { max-width: 100%; overflow-x: auto; }
     /* Very narrow columns left-align: justification needs room. */
@@ -169,17 +195,20 @@
      in a template and moved into the page by the script below. -->
 <template id="site-nav-template">
   <nav id="site-nav" aria-label="Site posts">
-    <a class="nav-home" href="{{ '/' | relative_url }}">Home</a>
-    <ul>
-      {% for post in site.posts reversed %}
-      <li>
-        <a href="{{ post.url | relative_url }}">
-          <span class="nav-date">{{ post.date | date: "%Y-%m-%d" }}</span>
-          {{ post.title }}
-        </a>
-      </li>
-      {% endfor %}
-    </ul>
+    <details id="site-nav-details" open>
+      <summary>All posts</summary>
+      <ul>
+        {% for post in site.posts reversed %}
+        <li>
+          <a href="{{ post.url | relative_url }}">
+            <span class="nav-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+            {{ post.title }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      <a class="nav-home" href="{{ '/' | relative_url }}">Back to Home</a>
+    </details>
   </nav>
 </template>
 <script>
@@ -206,5 +235,18 @@
         a.classList.add('current');
       }
     });
+
+    // Narrow screens: the list starts collapsed as a one-line
+    // "All posts" toggle; wide screens always show it fully.
+    var mq = window.matchMedia('(max-width: 1030px)');
+    var syncNav = function () {
+      var d = document.getElementById('site-nav-details');
+      if (!d) return;
+      if (mq.matches) { d.removeAttribute('open'); }
+      else { d.setAttribute('open', ''); }
+    };
+    syncNav();
+    if (mq.addEventListener) { mq.addEventListener('change', syncNav); }
+    else if (mq.addListener) { mq.addListener(syncNav); }
   });
 </script>
