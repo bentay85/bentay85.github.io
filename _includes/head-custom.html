@@ -8,7 +8,7 @@
      Layout model:
        body (normal document flow, the page scrolls normally, so
        keyboard scrolling works)
-       ├── .site-banner  one slim title line, links back home
+       ├── .site-banner  icon + two-line site name, links back home
        ├── .wrapper flex row: #site-nav (sticky post list) | section
        └── .site-footer  credits, at the bottom of the page
        Narrow screens (<1031px) stack the columns, post list below
@@ -51,14 +51,13 @@
   }
   ::-webkit-scrollbar-thumb:hover { background-color: #555555; }
 
-  /* Banner: one slim line with the site title, linking home. The tagline
-     and the credits that used to sit here moved to the prose (index.md)
-     and to the footer, so the banner no longer eats a slab of the
-     viewport on laptops and phones. It is pinned to the top, so it
-     stays visible while the page scrolls. --banner-h keeps the sidebar
-     aligned under it: 7px top padding + 40px line + 8px bottom padding
-     + 4px border. Update it if the banner size changes. */
-  :root { --banner-h: 59px; }
+  /* Banner: the site name on two left-aligned lines with the site
+     icon beside them, the whole thing linking home. It is pinned to
+     the top, so it stays visible while the page scrolls. --banner-h
+     keeps the sidebar aligned under it: 7px top padding + 80px text
+     block (two 40px lines) + 8px bottom padding + 4px border. Update
+     it if the banner size changes. */
+  :root { --banner-h: 99px; }
   .site-banner {
     position: sticky;
     top: 0;
@@ -75,24 +74,24 @@
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 20px;
-    text-align: center;
+    text-align: left;
   }
   .banner-title a { color: #e8e8e8; text-decoration: none; }
   .banner-title a:hover { color: #ffeb9b; }
-  /* Site icon in front of the title. Kept inside the 40px line box
-     (vertical-align: middle puts its center on the text's midline, so
-     a 32px tall image spans 8px above and below the text midline -
-     still inside the line-height), so --banner-h never changes. */
-  .banner-logo {
-    display: inline-block;
-    height: 32px;
-    width: auto;
-    vertical-align: middle;
-    margin-right: 10px;
+  /* Icon and the two-line name side by side. The icon is as tall as
+     the two text lines (2 x 40px line-height), so it never makes the
+     banner taller than --banner-h expects. */
+  .banner-link {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
   }
-  /* On the home page the banner title is the page's only h1 (post pages
-     take their h1 from the post heading, so there the banner is just
-     styled text). Kill the theme's big h1 styles here. */
+  .banner-logo { height: 80px; width: auto; }
+  .banner-name { line-height: 40px; }
+  /* On the home and About pages the banner title is the page's only
+     h1 (post pages take their h1 from the post heading, so there the
+     banner is just styled text). Kill the theme's big h1 styles
+     here. */
   .banner-title h1 {
     font-family: inherit;
     font-weight: normal;

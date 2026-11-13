@@ -15,9 +15,9 @@
     <div class="site-banner">
       <div class="banner-title">
         {% if page.layout == 'post' %}
-          <a href="{{ '/' | relative_url }}"><img class="banner-logo" src="https://i.postimg.cc/y86w6yDT/icon.png" alt=""> {{ site.title }}</a>
+          <a class="banner-link" href="{{ '/' | relative_url }}"><img class="banner-logo" src="https://i.postimg.cc/y86w6yDT/icon.png" alt=""><span class="banner-name">Ben’s Tech<br>Notebook</span></a>
         {% else %}
-          <h1><a href="{{ '/' | relative_url }}"><img class="banner-logo" src="https://i.postimg.cc/y86w6yDT/icon.png" alt=""> {{ site.title }}</a></h1>
+          <h1><a class="banner-link" href="{{ '/' | relative_url }}"><img class="banner-logo" src="https://i.postimg.cc/y86w6yDT/icon.png" alt=""><span class="banner-name">Ben’s Tech<br>Notebook</span></a></h1>
         {% endif %}
       </div>
     </div>
@@ -33,7 +33,7 @@
           </li>
         </ul>
         <ul>
-          {% for post in site.posts reversed %}
+          {% for post in site.posts %}
           <li>
             <a{% if post.url == page.url %} class="current"{% endif %} href="{{ post.url | relative_url }}">
               <span class="nav-date">
